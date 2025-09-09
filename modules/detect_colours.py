@@ -7,6 +7,7 @@ Detects colours on a map of landing pads.
 from pathlib import Path
 import cv2
 import numpy as np
+from typing import Union
 
 # Bootcampers remove the following lines:
 # Allow linters and formatters to pass for bootcamp maintainers
@@ -34,7 +35,7 @@ class DetectBlue:
         """
         assert class_create_private_key is DetectBlue.__create_key, "Use create() method"
 
-    def run(self, image: str, output_path: Path, return_mask: bool = False) -> None | np.ndarray:
+    def run(self, image: str, output_path: Path, return_mask: bool = False) -> Union[np.ndarray, None]:
         """
         Detects blue from an image and shows the annotated result.
 
@@ -49,17 +50,17 @@ class DetectBlue:
         # ============
 
         # Convert the image's colour to HSV
-        hsv = ...
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # Set upper and lower bounds for colour detection, this is in HSV
-        lower_blue = ...
-        upper_blue = ...
+        lower_blue = np.array([94, 80, 2])
+        upper_blue = np.array([126, 255, 255])
 
         # Apply the threshold for the colour detection
-        mask = ...
+        mask = cv2.inRange(hsv, lower_blue, upper_blue)
 
         # Shows the detected colour from the mask
-        res = ...
+        res = cv2.bitwise_and(img, img, mask=mask)
 
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
@@ -100,7 +101,7 @@ class DetectRed:
         """
         assert class_create_private_key is DetectRed.__create_key, "Use create() method"
 
-    def run(self, image: str, output_path: Path, return_mask: bool = False) -> None | np.ndarray:
+    def run(self, image: str, output_path: Path, return_mask: bool = False) -> Union[np.ndarray, None]:
         """
         Detects red from an image and shows the annotated result.
 
@@ -115,21 +116,27 @@ class DetectRed:
         # ============
 
         # Convert the image's colour to HSV
-        hsv = ...
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # Set upper and lower bounds for colour detection, this is in HSV
-        lower_red = ...
-        upper_red = ...
+        
+        lower_red1 = np.array([0, 100, 100], dtype=np.uint8)
+        upper_red1 = np.array([10, 255, 255], dtype=np.uint8)
+
+        lower_red2 = np.array([170, 100, 100], dtype=np.uint8)
+        upper_red2 = np.array([180, 255, 255], dtype=np.uint8)
 
         # Apply the threshold for the colour detection
-        mask = ...
+        mask1 = cv2.inRange(hsv, lower_red1, upper_red1)
+        mask2 = cv2.inRange(hsv, lower_red2, upper_red2)
+        mask = cv2.bitwise_or(mask1, mask2)
 
         # Shows the detected colour from the mask
-        res = ...
+        res = cv2.bitwise_and(img, img, mask=mask)
 
         # Annotate the colour detections
         # replace the '_' parameter with the appropiate variable
-        contours, _ = cv2.findContours(_, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy= cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
         # ============
@@ -145,6 +152,8 @@ class DetectRed:
         # ============
         # ↓ BOOTCAMPERS MODIFY BELOW THIS COMMENT ↓
         # ============
+
+        return mask if return_mask else None
 
         # Include the "return_mask" parameter if statement here, similar to how it is implemented in DetectBlue
         # Tests will not pass if this isn't included!
