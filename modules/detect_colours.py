@@ -5,9 +5,10 @@ Detects colours on a map of landing pads.
 """
 
 from pathlib import Path
+from typing import Union
+
 import cv2
 import numpy as np
-from typing import Union
 
 # Bootcampers remove the following lines:
 # Allow linters and formatters to pass for bootcamp maintainers
@@ -35,7 +36,9 @@ class DetectBlue:
         """
         assert class_create_private_key is DetectBlue.__create_key, "Use create() method"
 
-    def run(self, image: str, output_path: Path, return_mask: bool = False) -> Union[np.ndarray, None]:
+    def run(
+        self, image: str, output_path: Path, return_mask: bool = False
+    ) -> Union[np.ndarray, None]:
         """
         Detects blue from an image and shows the annotated result.
 
@@ -101,7 +104,9 @@ class DetectRed:
         """
         assert class_create_private_key is DetectRed.__create_key, "Use create() method"
 
-    def run(self, image: str, output_path: Path, return_mask: bool = False) -> Union[np.ndarray, None]:
+    def run(
+        self, image: str, output_path: Path, return_mask: bool = False
+    ) -> Union[np.ndarray, None]:
         """
         Detects red from an image and shows the annotated result.
 
@@ -119,7 +124,7 @@ class DetectRed:
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         # Set upper and lower bounds for colour detection, this is in HSV
-        
+
         lower_red1 = np.array([0, 100, 100], dtype=np.uint8)
         upper_red1 = np.array([10, 255, 255], dtype=np.uint8)
 
@@ -136,7 +141,7 @@ class DetectRed:
 
         # Annotate the colour detections
         # replace the '_' parameter with the appropiate variable
-        contours, hierarchy= cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # ============
         # ↑ BOOTCAMPERS MODIFY ABOVE THIS COMMENT ↑
         # ============
